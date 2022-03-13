@@ -1,0 +1,36 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int          @id @default(autoincrement())
+  name       String?      @db.VarChar(255)
+  email      String       @unique @db.VarChar(255)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  GitAccount GitAccount[]
+}
+
+model GitAccount {
+  id           Int         @id @default(autoincrement())
+  user         User        @relation(fields: [userID], references: [id])
+  userID       Int
+  accessToken  String?     @db.VarChar(128)
+  refreshToken String?     @db.VarChar(128)
+  provider     GitProvider
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+}
+
+enum GitProvider {
+  GITLAB
+  GITHUB
+}
