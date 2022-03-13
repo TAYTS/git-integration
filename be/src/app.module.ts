@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { RedisModule } from '@liaoliaots/nestjs-redis';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
@@ -13,6 +14,12 @@ import { CommonModule } from './common/common.module';
     }),
     CommonModule,
     AuthModule,
+    RedisModule.forRootAsync({
+      useFactory: async (configService: ConfigService) => {
+        return { config: { url: configService.get('REDIS_URL') } };
+      },
+      inject: [ConfigService],
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],
