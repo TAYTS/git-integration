@@ -1,6 +1,7 @@
-import { BasicStrategy as Strategy } from 'passport-http';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, SetMetadata, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
+import { User } from '@prisma/client';
+import { BasicStrategy as Strategy } from 'passport-http';
 import { Request } from 'express';
 import { AuthService } from './auth.service';
 
@@ -16,9 +17,11 @@ export class BasicStrategy extends PassportStrategy(Strategy) {
     request: Request,
     username: string,
     password: string,
-  ): Promise<boolean> {
-    if (await this.authService.validateUser(username, password)) {
-      return true;
+  ): Promise<User> {
+    const user = await this.authService.validateUser(username, password);
+    if (user != null) {
+      SetMetadata('user', user);
+      return user;
     }
     throw new UnauthorizedException();
   }
