@@ -1,10 +1,17 @@
 import React from 'react';
-import Form from './components/Form';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Form from './components/form';
+import OAuth from './components/oauth';
 
 function App() {
   return (
     <div className="min-h-full min-w-full flex justify-center items-center">
-      <Form />
+      <Router>
+        <Routes>
+          <Route index element={<Form />} />
+          <Route path="/oauth" element={<OAuth />} />
+        </Routes>
+      </Router>
     </div>
   );
 }
